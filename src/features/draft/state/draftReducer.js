@@ -1,8 +1,7 @@
-// This is the "single source of truth" for draft data.
-// React will store this state object and only change it via the reducer.
+import { generatePickSlots } from '../utils/snake';
 
 export const initialDraftState = {
-  status: 'setup', // can later become: 'drafting' or 'finished'
+  status: 'setup',
   players: [],
   settings: { rounds: 3, draftType: 'snake' },
   draftOrder: [],
@@ -10,38 +9,83 @@ export const initialDraftState = {
   currentPickIndex: 0,
 };
 
-// Reducer = a function that receives (currentState, action)
-// and returns the NEXT state.
 export function draftReducer(state, action) {
   switch (action.type) {
     case 'ADD_PLAYER': {
       const name =
-        action.payload?.name ??
+        action.payload?.name?.trim() ||
         `Player ${state.players.length + 1}`;
-
-      const newPlayer = {
-        id: crypto.randomUUID(), // simple unique id for React lists + logic
-        name,
-      };
 
       return {
         ...state,
-        players: [...state.players, newPlayer],
+        players: [
+          ...state.players,
+          { id: crypto.randomUUID(), name },
+        ],
+      };
+    }
+
+    case 'REMOVE_PLAYER': {
+      return {
+        ...state,
+        players: state.players.filter(
+          (p) => p.id !== action.payload.playerId
+        ),
+      };
+    }
+
+    case 'RENAME_PLAYER': {
+      return {
+        ...state,
+        players: state.players.map((p) =>
+          p.id === action.payload.playerId
+            ? { ...p, name: action.payload.name }
+            : p
+        ),
       };
     }
 
     case 'SET_ROUNDS': {
-      const nextRounds = Number(action.payload?.rounds ?? state.settings.rounds);
-
-      // Clamp to minimum 1 round
-      const safeRounds = Number.isFinite(nextRounds) ? Math.max(1, nextRounds) : state.settings.rounds;
-
       return {
         ...state,
         settings: {
           ...state.settings,
-          rounds: safeRounds,
+          rounds: Math.max(1, Number(action.payload.rounds)),
         },
+      };
+    }
+
+    case 'RANDOMIZE_DRAFT_ORDER': {
+      const shuffled = [...state.players]
+        .map((p) => ({ ...p, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map((p) => p.id);
+
+      return {
+        ...state,
+        draftOrder: shuffled,
+      };
+    }
+
+    case 'START_DRAFT': {
+      if (state.players.length < 2) return state;
+
+      const order =
+        state.draftOrder.length > 0
+          ? state.draftOrder
+          : state.players.map((p) => p.id);
+
+      const pickSlots = generatePickSlots(
+        order,
+        state.settings.rounds
+      );
+
+      return {
+        ...state,
+        status: 'drafting',
+        draftOrder: order,
+        pickSlots,
+        currentPickIndex: 0,
       };
     }
 
@@ -49,13 +93,6 @@ export function draftReducer(state, action) {
       return initialDraftState;
     }
 
-    // Not implemented yet (we'll do these in later steps)
-    case 'REMOVE_PLAYER':
-    case 'RENAME_PLAYER':
-    case 'RANDOMIZE_DRAFT_ORDER':
-    case 'START_DRAFT':
-    case 'MAKE_PICK':
-    case 'UNDO_PICK':
     default:
       return state;
   }
