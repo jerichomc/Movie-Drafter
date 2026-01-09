@@ -125,6 +125,35 @@ export function draftReducer(state, action) {
     case 'RESET_DRAFT': {
       return initialDraftState;
     }
+    
+    //undo most recent pick, unless at pick 0
+    case 'UNDO_PICK': {
+      const hasAnyPicked = state.pickSlots.some((s) => s.movie != null);
+      if (!hasAnyPicked) return state;
+
+      //figure out which pick to undo
+      const undoIndex = 
+        state.status === 'finished'
+        ? state.pickSlots.length - 1
+        : Math.max(0, state.currentPickIndex - 1);
+
+        //if slot is already empty, move back to find last picked slot
+        let idx = undoIndex;
+        while (idx >= 0 && !state.pickSlots[idx].movie) {
+          idx -= 1;
+        }
+        if (idx < 0) return state; //no picks to undo
+
+        const nextPickSlots = state.pickSlots.map((slot) => 
+          slot.pickIndex === idx ? {...slot, movie: null} : slot
+        );
+        return {
+          ...state,
+          pickSlots: nextPickSlots,
+          currentPickIndex: idx,
+          status: 'drafting',
+        }
+    }
 
     default:
       return state;

@@ -86,7 +86,7 @@ function MovieSearch({ onSelect, disabled }) {
         type="text"
         value={query}
         disabled={disabled}
-        placeholder={disabled ? 'Draft finished' : 'Search a movie (TMDB)...'}
+        placeholder={disabled ? 'Draft finished' : 'Search a movie...'}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setIsOpen(true)}
         onKeyDown={onKeyDown}

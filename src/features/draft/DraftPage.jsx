@@ -15,7 +15,7 @@ function DraftPage() {
 
   return (
     <div style={{ padding: 16, marginLeft: 160 }}>
-      <h1>Movie Draft</h1>
+      {/* <h1>Movie Draft</h1> */}
 
       {state.status === 'setup' && (
         <SetupPanel state={state} dispatch={dispatch} />
@@ -23,14 +23,26 @@ function DraftPage() {
 
       {state.status === 'drafting' && (
         <>
+          
           <div style={{ marginBottom: 12 }}>
             {/* <h2>Drafting</h2> */}
+            <p style={{opacity: 0.85}}>
+              Pick {state.currentPickIndex + 1} of {state.pickSlots.length} 
+            </p>
+
             <p>
               Round {currentPick.round} — <strong>{currentPlayer?.name}</strong> is picking
             </p>
 
+            <div style={{display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10}}>
+              <button onClick={() => dispatch({type: 'UNDO_PICK'})}
+                disabled={!state.pickSlots.some((s) => s.movie)}>
+                Undo Last Pick
+              </button>
+            </div>
+
             <MovieSearch
-              disabled={state.status === 'finished'}
+              disabled={Boolean(currentPick?.movie) || state.status !== 'drafting'}
               onSelect={(movie) =>
                 dispatch({
                   type: 'MAKE_PICK',
@@ -98,9 +110,9 @@ function DraftPage() {
         </>
       )}
 
-      <pre style={{ background: '#1b1b1b', padding: 12 }}>
+      {/* <pre style={{ background: '#1b1b1b', padding: 12 }}>
         {JSON.stringify(state, null, 2)}
-      </pre>
+      </pre> */}
     </div>
   );
 }

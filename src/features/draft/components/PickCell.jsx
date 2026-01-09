@@ -66,6 +66,41 @@ function PickCell({ pick, isCurrent, playerName }) {
       >
         {playerName}
       </div>
+            {/* NEW: movie title overlay (only if picked) */}
+      {pick.movie && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 6,
+            right: 6,
+            bottom: 6,
+            padding: '6px 8px',
+            borderRadius: 8,
+            background: 'rgba(0,0,0,0.65)',
+            color: '#fff',
+            fontSize: 12,
+            lineHeight: 1.2,
+          }}
+          title={`${pick.movie.title}${pick.movie.year ? ` (${pick.movie.year})` : ''}`}
+        >
+          <div
+            style={{
+              fontWeight: 700,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {pick.movie.title}
+          </div>
+          {pick.movie.year && (
+            <div style={{ fontSize: 11, opacity: 0.85 }}>
+              {pick.movie.year}
+            </div>
+          )}
+        </div>
+      )}
+
     </div>
   );
 }
