@@ -5,6 +5,25 @@ function SetupPanel({ state, dispatch }) {
     <div style={{ marginBottom: 16 }}>
       <h2>Setup Draft</h2>
 
+      {/* NEW: draft category input */}
+      <div style={{ marginBottom: 12 }}>
+        <label>
+          Draft category:{' '}
+          <input
+            type="text"
+            placeholder="e.g. Horror Movies"
+            value={state.meta.category}
+            onChange={(e) =>
+              dispatch({
+                type: 'SET_CATEGORY',
+                payload: { category: e.target.value },
+              })
+            }
+            style={{ width: 260 }}
+          />
+        </label>
+      </div>
+
       <div style={{ marginBottom: 12 }}>
         <label>
           Rounds:{' '}
@@ -18,20 +37,16 @@ function SetupPanel({ state, dispatch }) {
                 payload: { rounds: e.target.value },
               })
             }
+            style={{ width: 80 }}
           />
         </label>
       </div>
 
-      <PlayerListEditor
-        players={state.players}
-        dispatch={dispatch}
-      />
+      <PlayerListEditor players={state.players} dispatch={dispatch} />
 
       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
         <button
-          onClick={() =>
-            dispatch({ type: 'RANDOMIZE_DRAFT_ORDER' })
-          }
+          onClick={() => dispatch({ type: 'RANDOMIZE_DRAFT_ORDER' })}
           disabled={state.players.length < 2}
         >
           Randomize Order

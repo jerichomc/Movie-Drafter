@@ -4,6 +4,12 @@ export const initialDraftState = {
   status: 'setup',
   players: [],
   settings: { rounds: 3, draftType: 'snake' },
+
+  // NEW: metadata about the draft (category/theme)
+  meta: {
+    category: '',
+  },
+
   draftOrder: [],
   pickSlots: [],
   currentPickIndex: 0,
@@ -18,19 +24,14 @@ export function draftReducer(state, action) {
 
       return {
         ...state,
-        players: [
-          ...state.players,
-          { id: crypto.randomUUID(), name },
-        ],
+        players: [...state.players, { id: crypto.randomUUID(), name }],
       };
     }
 
     case 'REMOVE_PLAYER': {
       return {
         ...state,
-        players: state.players.filter(
-          (p) => p.id !== action.payload.playerId
-        ),
+        players: state.players.filter((p) => p.id !== action.payload.playerId),
       };
     }
 
@@ -38,9 +39,7 @@ export function draftReducer(state, action) {
       return {
         ...state,
         players: state.players.map((p) =>
-          p.id === action.payload.playerId
-            ? { ...p, name: action.payload.name }
-            : p
+          p.id === action.payload.playerId ? { ...p, name: action.payload.name } : p
         ),
       };
     }
@@ -55,16 +54,25 @@ export function draftReducer(state, action) {
       };
     }
 
+    // NEW: set the draft category
+    case 'SET_CATEGORY': {
+      const category = action.payload?.category ?? '';
+      return {
+        ...state,
+        meta: {
+          ...state.meta,
+          category,
+        },
+      };
+    }
+
     case 'RANDOMIZE_DRAFT_ORDER': {
       const shuffled = [...state.players]
         .map((p) => ({ ...p, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map((p) => p.id);
 
-      return {
-        ...state,
-        draftOrder: shuffled,
-      };
+      return { ...state, draftOrder: shuffled };
     }
 
     case 'START_DRAFT': {
@@ -75,10 +83,7 @@ export function draftReducer(state, action) {
           ? state.draftOrder
           : state.players.map((p) => p.id);
 
-      const pickSlots = generatePickSlots(
-        order,
-        state.settings.rounds
-      );
+      const pickSlots = generatePickSlots(order, state.settings.rounds);
 
       return {
         ...state,
@@ -90,7 +95,6 @@ export function draftReducer(state, action) {
     }
 
     case 'MAKE_PICK': {
-      // NEW: fill current pick with selected movie + advance turn
       const movie = action.payload?.movie;
       if (!movie) return state;
 
@@ -98,16 +102,13 @@ export function draftReducer(state, action) {
       const currentSlot = state.pickSlots[pickIndex];
       if (!currentSlot) return state;
 
-      // NEW: prevent picking the same TMDB movie twice
       const alreadyPicked = state.pickSlots.some(
         (slot) => slot.movie?.tmdbId === movie.tmdbId
       );
       if (alreadyPicked) return state;
 
       const nextPickSlots = state.pickSlots.map((slot) =>
-        slot.pickIndex === pickIndex
-          ? { ...slot, movie }
-          : slot
+        slot.pickIndex === pickIndex ? { ...slot, movie } : slot
       );
 
       const nextIndex = pickIndex + 1;

@@ -2,20 +2,19 @@ import { useReducer } from 'react';
 import { draftReducer, initialDraftState } from './state/draftReducer';
 import SetupPanel from './components/SetupPanel';
 import DraftBoard from './components/DraftBoard';
-import MovieSearch from './components/MovieSearch'; // NEW: TMDB autocomplete
+import MovieSearch from './components/MovieSearch';
+
+// NEW: podcast logo import (make sure the file exists at this path)
+import podcastLogo from '../../assets/Podcast Cover Photo.PNG'
 
 function DraftPage() {
   const [state, dispatch] = useReducer(draftReducer, initialDraftState);
 
   const currentPick = state.pickSlots[state.currentPickIndex];
-  const currentPlayer = state.players.find(
-    (p) => p.id === currentPick?.playerId
-  );
-
-  const isFinished = state.status === 'finished'; // NEW: disable search when done
+  const currentPlayer = state.players.find((p) => p.id === currentPick?.playerId);
 
   return (
-    <div style={{ padding: 16 }}>
+    <div style={{ padding: 16, marginLeft: 160 }}>
       <h1>Movie Draft</h1>
 
       {state.status === 'setup' && (
@@ -25,15 +24,13 @@ function DraftPage() {
       {state.status === 'drafting' && (
         <>
           <div style={{ marginBottom: 12 }}>
-            <h2>Drafting</h2>
+            {/* <h2>Drafting</h2> */}
             <p>
-              Round {currentPick.round} —{' '}
-              <strong>{currentPlayer?.name}</strong> is picking
+              Round {currentPick.round} — <strong>{currentPlayer?.name}</strong> is picking
             </p>
 
-            {/* NEW: TMDB search box */}
             <MovieSearch
-              disabled={isFinished}
+              disabled={state.status === 'finished'}
               onSelect={(movie) =>
                 dispatch({
                   type: 'MAKE_PICK',
@@ -43,16 +40,60 @@ function DraftPage() {
             />
           </div>
 
+          {/* NEW: centered logo + category above the board */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginTop: 18,
+              marginBottom: 12,
+              gap: 8,
+            }}
+          >
+            <img
+              src={podcastLogo}
+              alt="Podcast logo"
+              style={{
+                height: 160,
+                width: 'auto',
+                display: 'block',
+                borderRadius: 100,
+              }}
+            />
+
+            <div style={{ fontSize: 22, fontWeight: 700 }}>
+              {state.meta.category?.trim() ? state.meta.category : 'Movie Draft'}
+            </div>
+          </div>
+
           <DraftBoard state={state} />
         </>
       )}
 
       {state.status === 'finished' && (
         <>
-          <h2>Finished</h2>
+          {/* NEW: show same header block when finished */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginTop: 18,
+              marginBottom: 12,
+              gap: 8,
+            }}
+          >
+            <img
+              src={podcastLogo}
+              alt="Podcast logo"
+              style={{ height: 160, width: 'auto', display: 'block', borderRadius: 100 }}
+            />
+            <div style={{ fontSize: 22, fontWeight: 700 }}>
+              {state.meta.category?.trim() ? state.meta.category : 'Movie Draft'}
+            </div>
+          </div>
 
-          {/* NEW: allow viewing board after draft ends */}
-          <MovieSearch disabled={true} onSelect={() => {}} />
           <DraftBoard state={state} />
         </>
       )}
