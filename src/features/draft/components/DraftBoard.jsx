@@ -19,6 +19,7 @@ function DraftBoard({ state }) {
         display: 'flex',
         justifyContent: 'center', // centers horizontally
         marginTop: 24,
+        overflowX: 'auto',
       }}
     >
       {/* NEW: inner container keeps board width tight */}
@@ -32,9 +33,9 @@ function DraftBoard({ state }) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: `repeat(${picks.length}, 120px)`,
-                gap: 10,
-                marginTop: 8,
+                gridTemplateColumns: `repeat(${picks.length}, 140px)`,
+                gap: 16,
+                marginTop: 12,
               }}
             >
               {picks.map((pick) => {
