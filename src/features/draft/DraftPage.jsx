@@ -4,8 +4,9 @@ import SetupPanel from './components/SetupPanel';
 import DraftBoard from './components/DraftBoard';
 import MovieSearch from './components/MovieSearch';
 
-// NEW: podcast logo import (make sure the file exists at this path)
-import podcastLogo from '../../assets/Podcast Cover Photo.PNG'
+
+
+import podcastLogo from '../../assets/Podcast Cover Photo.PNG';
 
 function DraftPage() {
   const [state, dispatch] = useReducer(draftReducer, initialDraftState);
@@ -13,36 +14,42 @@ function DraftPage() {
   const currentPick = state.pickSlots[state.currentPickIndex];
   const currentPlayer = state.players.find((p) => p.id === currentPick?.playerId);
 
+  const isFinished = state.status === 'finished';
+
+
   return (
-    <div style={{ padding: 16, marginLeft: 160 }}>
+    <div style={{ padding: 16}}>
       {/* <h1>Movie Draft</h1> */}
 
-      {state.status === 'setup' && (
-        <SetupPanel state={state} dispatch={dispatch} />
-      )}
+      {state.status === 'setup' && <SetupPanel state={state} dispatch={dispatch} />}
 
       {state.status === 'drafting' && (
         <>
-          
-          <div style={{ marginBottom: 12 }}>
-            {/* <h2>Drafting</h2> */}
-            <p style={{opacity: 0.85}}>
-              Pick {state.currentPickIndex + 1} of {state.pickSlots.length} 
+          <div style={{ marginBottom: 12, marginLeft: 'auto', marginRight: 'auto', maxWidth: 480 }}>
+            <h2>Drafting</h2>
+
+            <p style={{ opacity: 0.85 }}>
+              Pick {state.currentPickIndex + 1} of {state.pickSlots.length}
             </p>
 
             <p>
               Round {currentPick.round} — <strong>{currentPlayer?.name}</strong> is picking
             </p>
 
-            <div style={{display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10}}>
-              <button onClick={() => dispatch({type: 'UNDO_PICK'})}
-                disabled={!state.pickSlots.some((s) => s.movie)}>
+            {/* NEW: draft controls row */}
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10 }}>
+              <button
+                onClick={() => dispatch({ type: 'UNDO_PICK' })}
+                disabled={!state.pickSlots.some((s) => s.movie)}
+              >
                 Undo Last Pick
               </button>
+
+              
             </div>
 
             <MovieSearch
-              disabled={Boolean(currentPick?.movie) || state.status !== 'drafting'}
+              disabled={Boolean(currentPick?.movie)}
               onSelect={(movie) =>
                 dispatch({
                   type: 'MAKE_PICK',
@@ -52,65 +59,73 @@ function DraftPage() {
             />
           </div>
 
-          {/* NEW: centered logo + category above the board */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              marginTop: 18,
-              marginBottom: 12,
-              gap: 8,
-            }}
-          >
-            <img
-              src={podcastLogo}
-              alt="Podcast logo"
+          {/* NEW: everything inside this div gets exported */}
+          <div id="export-area" style={{ padding: 16, borderRadius: 14, background: '#0b0b0b' }}>
+            <div
               style={{
-                height: 160,
-                width: 'auto',
-                display: 'block',
-                borderRadius: 100,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                marginBottom: 12,
+                gap: 8,
               }}
-            />
+            >
+              <img
+                src={podcastLogo}
+                alt="Podcast logo"
+                style={{ height: 170, width: 'auto', display: 'block', borderRadius: 100 }}
+              />
 
-            <div style={{ fontSize: 22, fontWeight: 700 }}>
-              {state.meta.category?.trim() ? state.meta.category : 'Movie Draft'}
+              <div style={{ fontSize: 22, fontWeight: 700 }}>
+                {state.meta.category?.trim() ? state.meta.category : 'Movie Draft'}
+              </div>
             </div>
-          </div>
 
-          <DraftBoard state={state} />
+            <DraftBoard state={state} />
+          </div>
         </>
       )}
 
       {state.status === 'finished' && (
         <>
-          {/* NEW: show same header block when finished */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              marginTop: 18,
-              marginBottom: 12,
-              gap: 8,
-            }}
-          >
-            <img
-              src={podcastLogo}
-              alt="Podcast logo"
-              style={{ height: 160, width: 'auto', display: 'block', borderRadius: 100 }}
-            />
-            <div style={{ fontSize: 22, fontWeight: 700 }}>
-              {state.meta.category?.trim() ? state.meta.category : 'Movie Draft'}
-            </div>
+          {/* NEW: export button on finished screen too */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12, gap: 10 }}>
+            
+
+            <button onClick={() => dispatch({ type: 'UNDO_PICK' })}>
+              Undo Last Pick
+            </button>
           </div>
 
-          <DraftBoard state={state} />
+          {/* NEW: everything inside this div gets exported */}
+          <div id="export-area" style={{ padding: 16, borderRadius: 14, background: '#0b0b0b' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                marginBottom: 12,
+                gap: 8,
+              }}
+            >
+              <img
+                src={podcastLogo}
+                alt="Podcast logo"
+                style={{ height: 80, width: 'auto', display: 'block' }}
+              />
+
+              <div style={{ fontSize: 22, fontWeight: 700 }}>
+                {state.meta.category?.trim() ? state.meta.category : 'Movie Draft'}
+              </div>
+            </div>
+
+            <DraftBoard state={state} />
+          </div>
         </>
       )}
 
-      {/* <pre style={{ background: '#1b1b1b', padding: 12 }}>
+      {/* you can keep or remove this later */}
+      {/* <pre style={{ background: '#1b1b1b', padding: 12, marginTop: 16 }}>
         {JSON.stringify(state, null, 2)}
       </pre> */}
     </div>
@@ -118,4 +133,3 @@ function DraftPage() {
 }
 
 export default DraftPage;
-

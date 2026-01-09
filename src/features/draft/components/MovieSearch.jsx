@@ -90,7 +90,7 @@ function MovieSearch({ onSelect, disabled }) {
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setIsOpen(true)}
         onKeyDown={onKeyDown}
-        style={{ width: '100%', padding: 10, borderRadius: 8 }}
+        style={{ width: '100%', padding: 10, borderRadius: 8, marginBottom: 4 }}
       />
 
       {isLoading && (
