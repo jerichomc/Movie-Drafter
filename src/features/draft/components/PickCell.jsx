@@ -1,9 +1,8 @@
 function PickCell({ pick, isCurrent, playerName }) {
-  const posterUrl = pick.movie?.posterUrl;
+  const imageUrl = pick.item?.imageUrl;
 
   return (
     <>
-      {/* NEW: glow animation styles (scoped, simple) */}
       {isCurrent && (
         <style>
           {`
@@ -33,19 +32,16 @@ function PickCell({ pick, isCurrent, playerName }) {
           overflow: 'hidden',
           background: '#1a1a1a',
           position: 'relative',
-
-          // NEW: glow effect for current pick
           animation: isCurrent ? 'glowPulse 1.6s ease-in-out infinite' : 'none',
           boxShadow: isCurrent
             ? '0 0 12px rgba(120, 200, 255, 0.8)'
             : '1px solid #444',
         }}
       >
-        {/* Poster */}
-        {posterUrl ? (
+        {imageUrl ? (
           <img
-            src={posterUrl}
-            alt={pick.movie?.title ?? 'Movie poster'}
+            src={imageUrl}
+            alt={pick.item?.title ?? 'Draft pick'}
             style={{
               width: '100%',
               height: '100%',
@@ -68,7 +64,6 @@ function PickCell({ pick, isCurrent, playerName }) {
           </div>
         )}
 
-        {/* Player name overlay */}
         <div
           style={{
             position: 'absolute',
@@ -89,8 +84,7 @@ function PickCell({ pick, isCurrent, playerName }) {
           {playerName}
         </div>
 
-        {/* Movie title overlay (if picked) */}
-        {pick.movie && (
+        {pick.item && (
           <div
             style={{
               position: 'absolute',
@@ -112,11 +106,11 @@ function PickCell({ pick, isCurrent, playerName }) {
                 textOverflow: 'ellipsis',
               }}
             >
-              {pick.movie.title}
+              {pick.item.title}
             </div>
-            {pick.movie.year && (
+            {pick.item.subtitle && (
               <div style={{ fontSize: 11, opacity: 0.85 }}>
-                {pick.movie.year}
+                {pick.item.subtitle}
               </div>
             )}
           </div>
@@ -127,4 +121,3 @@ function PickCell({ pick, isCurrent, playerName }) {
 }
 
 export default PickCell;
-

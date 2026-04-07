@@ -54,6 +54,49 @@ function SetupPanel({ state, dispatch }) {
           </label>
         </div>
 
+        <div style={{ marginBottom: 12 }}>
+  <label>
+    Draft type:
+    <select
+      value={state.meta.draftTarget}
+      onChange={(e) =>
+        dispatch({
+          type: 'SET_DRAFT_TARGET',
+          payload: { target: e.target.value },
+        })
+      }
+      style={{ width: '100%' }}
+    >
+      <option value="movie">Movie</option>
+      <option value="person">Person</option>
+    </select>
+  </label>
+</div>
+
+{state.meta.draftTarget === 'person' && (
+  <div style={{ marginBottom: 12 }}>
+    <label>
+      Person type:
+      <select
+        value={state.meta.personRoleFilter}
+        onChange={(e) =>
+          dispatch({
+            type: 'SET_PERSON_ROLE_FILTER',
+            payload: { roleFilter: e.target.value },
+          })
+        }
+        style={{ width: '100%' }}
+      >
+        <option value="any">Any person</option>
+        <option value="actor">Actors only</option>
+        <option value="director">Directors only</option>
+      </select>
+    </label>
+  </div>
+)}
+
+
+
         <PlayerListEditor players={state.players} dispatch={dispatch} />
 
         <div

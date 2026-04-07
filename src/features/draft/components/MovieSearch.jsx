@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { searchMovies } from '../api/tmdb';
+import { searchMovies, searchPeople } from '../api/tmdb';
 
-// NEW: autocomplete movie search component
-function MovieSearch({ onSelect, disabled }) {
+function MovieSearch({ onSelect, disabled, draftTarget, personRoleFilter }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +10,6 @@ function MovieSearch({ onSelect, disabled }) {
 
   const containerRef = useRef(null);
 
-  // NEW: debounce TMDB search while typing
   useEffect(() => {
     const trimmed = query.trim();
     if (!trimmed) {
@@ -25,8 +23,12 @@ function MovieSearch({ onSelect, disabled }) {
 
     const handle = setTimeout(async () => {
       try {
-        const data = await searchMovies(trimmed);
-        setResults(data.slice(0, 8)); // keep dropdown tight
+        const data =
+          draftTarget === 'person'
+            ? await searchPeople(trimmed, personRoleFilter)
+            : await searchMovies(trimmed);
+
+        setResults(data.slice(0, 8));
         setIsOpen(true);
         setActiveIndex(-1);
       } catch (err) {
@@ -39,9 +41,8 @@ function MovieSearch({ onSelect, disabled }) {
     }, 350);
 
     return () => clearTimeout(handle);
-  }, [query]);
+  }, [query, draftTarget, personRoleFilter]);
 
-  // NEW: close dropdown on outside click
   useEffect(() => {
     function onDocMouseDown(e) {
       if (!containerRef.current) return;
@@ -49,12 +50,13 @@ function MovieSearch({ onSelect, disabled }) {
         setIsOpen(false);
       }
     }
+
     document.addEventListener('mousedown', onDocMouseDown);
     return () => document.removeEventListener('mousedown', onDocMouseDown);
   }, []);
 
-  function chooseMovie(movie) {
-    onSelect(movie);
+  function chooseItem(item) {
+    onSelect(item);
     setQuery('');
     setResults([]);
     setIsOpen(false);
@@ -73,7 +75,7 @@ function MovieSearch({ onSelect, disabled }) {
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (activeIndex >= 0) {
-        chooseMovie(results[activeIndex]);
+        chooseItem(results[activeIndex]);
       }
     } else if (e.key === 'Escape') {
       setIsOpen(false);
@@ -86,7 +88,13 @@ function MovieSearch({ onSelect, disabled }) {
         type="text"
         value={query}
         disabled={disabled}
-        placeholder={disabled ? 'Draft finished' : 'Search a movie...'}
+        placeholder={
+          disabled
+            ? 'Draft finished'
+            : draftTarget === 'person'
+              ? 'Search a person...'
+              : 'Search a movie...'
+        }
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setIsOpen(true)}
         onKeyDown={onKeyDown}
@@ -95,7 +103,7 @@ function MovieSearch({ onSelect, disabled }) {
 
       {isLoading && (
         <div style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>
-          Searching…
+          Searching...
         </div>
       )}
 
@@ -113,11 +121,11 @@ function MovieSearch({ onSelect, disabled }) {
             zIndex: 20,
           }}
         >
-          {results.map((movie, idx) => (
+          {results.map((item, idx) => (
             <button
-              key={movie.tmdbId}
+              key={item.tmdbId}
               type="button"
-              onClick={() => chooseMovie(movie)}
+              onClick={() => chooseItem(item)}
               style={{
                 width: '100%',
                 textAlign: 'left',
@@ -141,9 +149,9 @@ function MovieSearch({ onSelect, disabled }) {
                   overflow: 'hidden',
                 }}
               >
-                {movie.posterUrl ? (
+                {item.imageUrl ? (
                   <img
-                    src={movie.posterUrl}
+                    src={item.imageUrl}
                     alt=""
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
@@ -151,10 +159,10 @@ function MovieSearch({ onSelect, disabled }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontWeight: 600 }}>
-                  {movie.title} {movie.year ? `(${movie.year})` : ''}
+                <div style={{ fontWeight: 600 }}>{item.title}</div>
+                <div style={{ fontSize: 12, opacity: 0.8 }}>
+                  {item.subtitle || 'TMDB'}
                 </div>
-                <div style={{ fontSize: 12, opacity: 0.8 }}>TMDB</div>
               </div>
             </button>
           ))}
