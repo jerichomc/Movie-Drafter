@@ -11,7 +11,7 @@ function SetupPanel({ state, dispatch }) {
         <h2 style={{ textAlign: 'center' }}>Setup Draft</h2>
 
         {/* NEW: draft category input */}
-        <div style={{ marginBottom: 12 }}>
+        <div style={{ marginBottom: 12 }} className="category-input">
           <label>
             Draft category:{' '}
             <input

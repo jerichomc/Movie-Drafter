@@ -19,12 +19,7 @@ function DraftPage() {
       {state.status === 'drafting' && (
         <>
           <div
-            style={{
-              marginBottom: 12,
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              maxWidth: 480,
-            }}
+            className="draft-controls"
           >
             <h2>Drafting</h2>
 
@@ -46,6 +41,8 @@ function DraftPage() {
             </div>
 
             <MovieSearch
+              pickSlots={state.pickSlots}
+              players={state.players}
               disabled={Boolean(currentPick?.item)}
               draftTarget={state.meta.draftTarget}
               personRoleFilter={state.meta.personRoleFilter}
@@ -71,10 +68,10 @@ function DraftPage() {
               <img
                 src={podcastLogo}
                 alt="Podcast logo"
-                style={{ height: 170, width: 'auto', display: 'block', borderRadius: 100 }}
+                className="draft-logo"
               />
 
-              <div style={{ fontSize: 22, fontWeight: 700 }}>
+              <div className="draft-title">
                 {state.meta.category?.trim()
                   ? state.meta.category
                   : state.meta.draftTarget === 'person'
@@ -109,10 +106,10 @@ function DraftPage() {
               <img
                 src={podcastLogo}
                 alt="Podcast logo"
-                style={{ height: 80, width: 'auto', display: 'block' }}
+                className="draft-logo"
               />
 
-              <div style={{ fontSize: 22, fontWeight: 700 }}>
+              <div className="draft-title">
                 {state.meta.category?.trim()
                   ? state.meta.category
                   : state.meta.draftTarget === 'person'

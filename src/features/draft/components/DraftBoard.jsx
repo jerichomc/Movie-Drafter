@@ -1,101 +1,53 @@
 import PickCell from './PickCell';
 
+const HOST_COLORS = ['#f4a340', '#56c58c', '#55bbdb', '#bd98e5', '#eb8491'];
+
 function DraftBoard({ state }) {
-  const { pickSlots, players, currentPickIndex, draftOrder } = state;
-
-  const columnPlayerIds =
-    draftOrder && draftOrder.length > 0
-      ? draftOrder
-      : players.map((p) => p.id);
-
-  const pickByRoundAndPlayer = {};
-  for (const pick of pickSlots) {
-    if (!pickByRoundAndPlayer[pick.round]) {
-      pickByRoundAndPlayer[pick.round] = {};
-    }
-    pickByRoundAndPlayer[pick.round][pick.playerId] = pick;
-  }
-
-  const roundNumbers = Object.keys(pickByRoundAndPlayer)
-    .map(Number)
-    .sort((a, b) => a - b);
-
-  function getPlayerName(playerId) {
-    return players.find((p) => p.id === playerId)?.name ?? 'Player';
-  }
+  const { pickSlots, players, currentPickIndex, draftOrder, status } = state;
+  const columnPlayerIds = draftOrder?.length ? draftOrder : players.map((p) => p.id);
+  const rounds = [...new Set(pickSlots.map((pick) => pick.round))].sort((a, b) => a - b);
+  const getPlayerName = (id) => players.find((p) => p.id === id)?.name ?? 'Player';
+  const getPlayerColor = (id) => HOST_COLORS[Math.max(0, players.findIndex((p) => p.id === id)) % HOST_COLORS.length];
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: 24,
-      }}
-    >
-      <div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${columnPlayerIds.length}, 140px)`,
-            gap: 16,
-            marginTop: 10,
-            marginBottom: 18,
-          }}
-        >
+    <div className="draft-board-scroll" role="region" aria-label="Draft board" tabIndex={0}>
+      <div className="draft-board" style={{ '--player-count': columnPlayerIds.length }}>
+        <div className="draft-board-row draft-board-headers">
           {columnPlayerIds.map((playerId) => (
             <div
-              key={`header-${playerId}`}
-              style={{
-                textAlign: 'center',
-                fontWeight: 700,
-                padding: '6px 8px',
-                borderRadius: 10,
-                background: '#121212',
-                border: '1px solid #333',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}
+              key={playerId}
+              className="player-header"
+              style={{ '--host-color': getPlayerColor(playerId) }}
               title={getPlayerName(playerId)}
             >
+              <span className="player-header-dot" aria-hidden="true" />
               {getPlayerName(playerId)}
             </div>
           ))}
         </div>
 
-        {roundNumbers.map((roundNumber) => (
-          <div key={roundNumber} style={{ marginBottom: 24 }}>
-            <strong>Round {roundNumber}</strong>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${columnPlayerIds.length}, 140px)`,
-                gap: 16,
-                marginTop: 12,
-              }}
-            >
+        {rounds.map((round) => (
+          <section className="draft-round" key={round} aria-label={`Round ${round}`}>
+            <div className="round-divider">
+              <span className="round-ticket">Round <strong>{String(round).padStart(2, '0')}</strong></span>
+              <span className="round-direction">{round % 2 === 1 ? 'Left to right →' : '← Right to left'}</span>
+            </div>
+            <div className="draft-board-row">
               {columnPlayerIds.map((playerId) => {
-                const pick = pickByRoundAndPlayer[roundNumber]?.[playerId];
-
-                const safePick = pick ?? {
-                  pickIndex: -1,
-                  round: roundNumber,
-                  playerId,
-                  item: null,
-                };
-
+                const pick = pickSlots.find((slot) => slot.round === round && slot.playerId === playerId);
+                if (!pick) return <div key={playerId} />;
                 return (
                   <PickCell
-                    key={`${roundNumber}-${playerId}`}
-                    pick={safePick}
+                    key={playerId}
+                    pick={pick}
                     playerName={getPlayerName(playerId)}
-                    isCurrent={pick?.pickIndex === currentPickIndex}
+                    hostColor={getPlayerColor(playerId)}
+                    isCurrent={status === 'drafting' && pick.pickIndex === currentPickIndex}
                   />
                 );
               })}
             </div>
-          </div>
+          </section>
         ))}
       </div>
     </div>

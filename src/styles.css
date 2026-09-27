@@ -141,7 +141,228 @@ select:focus-visible {
   margin-top: 28px;
 }
 
+.category-input {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.draft-controls {
+  position: sticky;
+  top: 12px;
+  z-index: 30;
+  max-width: 480px;
+  margin: 0 auto 20px;
+  padding: 14px 18px;
+  background: #1e1d1b;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.search-message {
+  padding: 14px;
+  color: #c7beaf;
+  font-size: 0.875rem;
+}
+
+.search-result:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.search-drafted {
+  margin-top: 4px;
+  color: var(--accent);
+  font-size: 0.75rem;
+}
+
+.draft-controls h2 {
+  display: none;
+}
+
+.draft-controls p {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+}
+
+.draft-logo {
+  display: block;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.draft-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.player-header {
+  padding: 10px 8px;
+  background: #242321;
+  border-bottom: 3px solid var(--host-color, var(--accent));
+  border-radius: 8px 8px 0 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Draft board: host colors follow the player, even after shuffling. */
+.draft-board-scroll {
+  overflow-x: auto;
+  padding: 4px 4px 20px;
+  margin-top: 24px;
+}
+
+.draft-board {
+  --card-width: 172px;
+  --column-gap: 20px;
+  width: max-content;
+  margin-inline: auto;
+}
+
+.draft-board-row {
+  display: grid;
+  grid-template-columns: repeat(var(--player-count), var(--card-width));
+  gap: var(--column-gap);
+}
+
+.player-header-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--host-color);
+  vertical-align: middle;
+}
+
+.draft-round { margin-top: 24px; }
+
+.round-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.round-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed #48443d;
+}
+
+.round-ticket {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  background: #e9dfcd;
+  color: #29251f;
+  border-radius: 3px;
+  font: 600 0.875rem 'Barlow Condensed', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.round-ticket strong {
+  border-left: 1px dashed #827565;
+  padding-left: 12px;
+  font-size: 1.125rem;
+}
+
+.round-direction { color: #aaa295; font-size: 0.7rem; }
+
+.pick-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #35322d;
+  border-top: 3px solid var(--host-color);
+  border-radius: 10px;
+  background: #1e1d1b;
+}
+
+.pick-card-current {
+  border-color: var(--host-color);
+  outline: 2px solid var(--host-color);
+  outline-offset: 3px;
+}
+
+.pick-artwork {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background: #171715;
+}
+
+.pick-artwork img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pick-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 12px;
+  color: #aaa295;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.pick-placeholder-number {
+  color: #575148;
+  font: 700 3.5rem 'Barlow Condensed', sans-serif;
+}
+
+.pick-card-current .pick-placeholder { color: var(--host-color); }
+.pick-card-current .pick-placeholder-number { color: var(--host-color); }
+
+.pick-number {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 7px;
+  border-radius: 4px;
+  background: #171717e8;
+  color: #f3ebdf;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.pick-caption { padding: 12px; }
+.pick-title {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.pick-subtitle {
+  margin-top: 5px;
+  color: #aaa295;
+  font-size: 0.7rem;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 600px) {
+  .draft-board {
+    --card-width: 140px;
+    --column-gap: 12px;
+  }
   .setup-panel {
     margin: 16px auto;
     padding: 20px;
