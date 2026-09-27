@@ -4,14 +4,7 @@ function SetupPanel({ state, dispatch }) {
   return (
     // NEW: outer wrapper to center the panel
     <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: 24,
-        padding: 16,
-        background: '#121212',
-        borderRadius: 12,
-      }}
+      className="setup-panel"
     >
       {/* NEW: inner container with max width */}
       <div style={{ width: '100%', maxWidth: 480 }}>
@@ -100,12 +93,7 @@ function SetupPanel({ state, dispatch }) {
         <PlayerListEditor players={state.players} dispatch={dispatch} />
 
         <div
-          style={{
-            display: 'flex',
-            gap: 8,
-            marginTop: 12,
-            justifyContent: 'center', // NEW: center buttons
-          }}
+          className="setup-actions"
         >
           <button
             onClick={() => dispatch({ type: 'RANDOMIZE_DRAFT_ORDER' })}
@@ -115,6 +103,7 @@ function SetupPanel({ state, dispatch }) {
           </button>
 
           <button
+          className="button-primary"
             onClick={() => dispatch({ type: 'START_DRAFT' })}
             disabled={state.players.length < 2}
           >

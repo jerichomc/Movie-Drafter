@@ -1,10 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: #f3ebdf;
+  background: #171717;
+
+  --surface: #242321;
+  --border: #48443d;
+  --accent: #f4a340;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #0f0f0f;
-  color: #f5f5f5;
+  min-width: 320px;
+  min-height: 100vh;
+  background-image: radial-gradient(
+    rgba(243, 235, 223, 0.045) 1px,
+    transparent 1px
+  );
+  background-size: 8px 8px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0 0 24px;
+  font-size: 2.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+input,
+select {
+  padding: 10px 12px;
+  color: #f3ebdf;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+input::placeholder {
+  color: #aaa295;
+}
+
+button {
+  padding: 10px 16px;
+  color: #f3ebdf;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: #36312a;
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+::selection {
+  color: #171717;
+  background: var(--accent);
+}
+
+.button-primary {
+  background: var(--accent);
+  color: #171717;
+  border-color: var(--accent); 
+}
+
+.button-primary:hover:not(:disabled) {
+  background: #ffb85c;
+  border-color: #ffb85c;
+}
+
+.setup-panel {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #1e1d1b;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.setup-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.setup-panel h3 {
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+
+.setup-panel input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
+
+.setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+@media (max-width: 600px) {
+  .setup-panel {
+    margin: 16px auto;
+    padding: 20px;
+  }
 }
